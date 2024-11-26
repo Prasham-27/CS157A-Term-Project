@@ -34,5 +34,7 @@ build/
 !schema.sql    # Allow schema.sql
 !data.sql      # Allow data.sql
 
+application.properties
+
 ### VS Code ###
 .vscode/

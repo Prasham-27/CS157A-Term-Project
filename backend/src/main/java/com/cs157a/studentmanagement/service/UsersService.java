@@ -6,6 +6,7 @@ import com.cs157a.studentmanagement.utils.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -46,6 +47,7 @@ public class UsersService {
       return passwordEncoder.matches(password, storedHash);
    }
 
+   @Transactional
    public boolean signUp(String email, String password, String firstName,
                          String lastName, Integer role) {
       String hashedPassword = passwordEncoder.encode(password);
