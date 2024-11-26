@@ -2,21 +2,18 @@ package com.cs157a.studentmanagement.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 /**
  * Defines user roles
  */
 @Entity
 @Table(name = "roles")
 public class Roles {
-
-   /**
-    * An auto incremented SMALLINT role_id
-    */
    @Id
-   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq")
-   @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq", allocationSize = 1)
-   @Column(name = "role_id", columnDefinition = "SMALLINT")
-   private Short id;
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "role_id")
+   private Integer id;
 
    /**
     * The name of the role
@@ -28,7 +25,7 @@ public class Roles {
    /**
     * The destination of a FORIEGN KEY, the actual constraint is in users
     */
-   @OneToOne(mappedBy = "role")
-   Users user;
+   @OneToMany(mappedBy = "role")
+   private List<Users> users;
 
 }

@@ -47,7 +47,7 @@ public class UsersService {
    }
 
    public boolean signUp(String email, String password, String firstName,
-                         String lastName, Short role) {
+                         String lastName, Integer role) {
       String hashedPassword = passwordEncoder.encode(password);
       int rowsInserted = usersRepository.insertUser(email, hashedPassword,
               firstName, lastName, role);

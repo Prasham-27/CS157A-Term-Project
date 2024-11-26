@@ -29,5 +29,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Ignore sensitive database setup scripts
+*.sql
+!schema.sql    # Allow schema.sql
+!data.sql      # Allow data.sql
+
 ### VS Code ###
 .vscode/

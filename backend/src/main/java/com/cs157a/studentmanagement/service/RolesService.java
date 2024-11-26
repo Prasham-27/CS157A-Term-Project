@@ -10,11 +10,11 @@ public class RolesService {
    @Autowired
    private RolesRepository rolesRepository;
 
-   public Short getRoleId(String roleName) {
+   public Integer getRoleId(String roleName) {
       return rolesRepository.getRoleId(roleName);
    }
 
-   public String getRoleName(Short roleId) {
+   public String getRoleName(Integer roleId) {
       return rolesRepository.getRoleName(roleId);
    }
 

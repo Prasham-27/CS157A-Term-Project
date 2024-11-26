@@ -1,17 +1,14 @@
 package com.cs157a.studentmanagement.controller;
 
-import com.cs157a.studentmanagement.service.DynamicDatabaseService;
 import com.cs157a.studentmanagement.service.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,9 +18,6 @@ import com.cs157a.studentmanagement.utils.enums.Role;
 @Controller
 @RequestMapping("/api")
 public class LoginController {
-
-   @Autowired
-   private DynamicDatabaseService dynamicDatabaseService;
 
    @Autowired
    private UsersService usersService;
@@ -67,9 +61,6 @@ public class LoginController {
       // Store username in session
       session.setAttribute("id", userId);
       session.setAttribute("role", role);
-
-      // Set database connection specific to their role
-      dynamicDatabaseService.setUserDatabase(userId);
 
       return ResponseEntity.ok("Success");
    }
