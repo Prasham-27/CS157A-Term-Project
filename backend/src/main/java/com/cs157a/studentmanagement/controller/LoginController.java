@@ -1,18 +1,21 @@
+/**
+ * The API endpoints to signup different roles
+ */
+
 package com.cs157a.studentmanagement.controller;
 
 import com.cs157a.studentmanagement.service.UsersService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.servlet.http.HttpSession;
 
 import com.cs157a.studentmanagement.utils.enums.Role;
+
+import java.util.Map;
 
 
 @Controller
@@ -24,34 +27,36 @@ public class LoginController {
 
    // Handle login form submission and create a session attribute
    @PostMapping("/login/student")
-   public ResponseEntity<String> studentLogin(@RequestParam Long userId,
-                                       @RequestParam String password, HttpSession session) {
-      return loginUser(userId, password, Role.STUDENT, session);
+   public ResponseEntity<String> studentLogin(@RequestBody Map<String, Object> request,
+                                              HttpSession session) {
+      return loginUser(request, Role.STUDENT, session);
    }
 
    // Handle login form submission and create a session attribute
    @PostMapping("/login/instructor")
-   public ResponseEntity<String> instructorLogin(@RequestParam Long userId,
-                                       @RequestParam String password, HttpSession session) {
-      return loginUser(userId, password, Role.INSTRUCTOR, session);
+   public ResponseEntity<String> instructorLogin(@RequestBody Map<String, Object> request,
+                                                 HttpSession session) {
+      return loginUser(request, Role.INSTRUCTOR, session);
    }
 
    @GetMapping("/logout")
-   public String logout(HttpSession session) {
+   public ResponseEntity<String> logout(HttpSession session) {
       session.invalidate();
-      return "redirect:/login";
+      return ResponseEntity.ok("Success");
    }
 
    /**
     * Helper function that logs in user based on the role we desire
     *
-    * @param userId
-    * @param password
-    * @param session
-    * @return
+    * @param request   Holds the userId and password
+    * @param session   The current session
+    * @return          200 = success, 400 = fail
     */
-   private ResponseEntity<String> loginUser(
-           Long userId, String password, Role role, HttpSession session) {
+   private ResponseEntity<String> loginUser(@RequestBody Map<String, Object> request,
+                                            Role role, HttpSession session) {
+
+      String password = (String)request.get("password");
+      Long userId = Long.parseLong((String)request.get("user_id"));
 
       // Check if the password matches
       if (!usersService.checkPassword(password, userId) ||

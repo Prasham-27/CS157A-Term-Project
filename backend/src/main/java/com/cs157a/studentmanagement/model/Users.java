@@ -29,7 +29,7 @@ public class Users {
            columnDefinition = "VARCHAR(30)")
    private String lastName;
 
-   // TODO Add a check to see if the the role exists in the roles table
+   // TODO Add a check to see if the role exists in the roles table
    @ManyToOne
    @JoinColumn(name = "role_id", nullable = false) // CONSTRAINT Foreign key
    private Roles role;

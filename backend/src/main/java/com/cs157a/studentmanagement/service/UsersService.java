@@ -1,3 +1,8 @@
+/**
+ * Contains the transactions for the users table, such as signup, login, etc.
+ */
+
+
 package com.cs157a.studentmanagement.service;
 
 import com.cs157a.studentmanagement.repository.RolesRepository;
@@ -35,8 +40,8 @@ public class UsersService {
    }
 
    /**
-    * A helper functions to check if the password matches with the one in the
-    * Database.
+    * A helper function to check if the password matches with the one in the
+    * Database. This function is used in the LoginController.
     *
     * @param password    The unhashed user password
     * @param userId      The userId associated with the password
@@ -56,6 +61,5 @@ public class UsersService {
 
       return (rowsInserted > 0);
    }
-
 
 }
