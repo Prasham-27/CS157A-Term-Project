@@ -1,41 +1,48 @@
-/**
- * The API endpoints to signup different roles
- */
-
 package com.cs157a.studentmanagement.controller;
 
-import com.cs157a.studentmanagement.service.RolesService;
 import com.cs157a.studentmanagement.service.UsersService;
 import com.cs157a.studentmanagement.utils.enums.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Map;
 
-
+/**
+ * Handles the signup operations for the frontend
+ */
 @Controller
 @RequestMapping("/api")
 public class SignUpController {
 
-   @Autowired
-   private UsersService usersService;
+   private final UsersService usersService;
 
-   @Autowired
-   private RolesService rolesService;
+   public SignUpController(UsersService usersService) {
+      this.usersService = usersService;
+   }
 
-   // TODO will later need to check the role for signing up students
-
+   /**
+    * Signs up a user as a student
+    *
+    * @param request The data required to signup the user
+    * @param session The session
+    * @return        The Success (200) or fail (400) response
+    */
    @PostMapping("/signup/student")
    public ResponseEntity<String> signupStudent(@RequestBody Map<String, Object> request,
                                        HttpSession session) {
       return signupUser(request, Role.STUDENT);
    }
 
+   /**
+    * Signs up a user as an instructor
+    *
+    * @param request The data required to signup the user
+    * @param session The session
+    * @return        The Success (200) or fail (400) response
+    */
    @PostMapping("/signup/instructor")
    public ResponseEntity<String> signupInstructor(@RequestBody Map<String, Object> request,
                                         HttpSession session) {
@@ -43,7 +50,7 @@ public class SignUpController {
    }
 
    /**
-    * Signs up a user to a specific Role.
+    * Helper method that signs up a user to a specific Role.
     *
     * @param request The request body of signup
     * @param role    The role to signup the user
@@ -64,7 +71,7 @@ public class SignUpController {
                  passwordHash,
                  firstName,
                  lastName,
-                 rolesService.getRoleId(role.toString())
+                 role
          )) {
             return ResponseEntity.badRequest().body(
                     String.format("Signup failed: Invalid data or error processing signup for %s",
@@ -73,7 +80,6 @@ public class SignUpController {
       }
       catch (Exception e) {
          e.printStackTrace();
-         System.out.printf("Failed to sign-up user of role %s\n", role.toString());
       }
 
       return ResponseEntity.ok("Success");

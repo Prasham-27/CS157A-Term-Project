@@ -1,9 +1,9 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
+
 import WelcomePage from './pages/root/WelcomePage';
-import StudentLogin from './pages/login/StudentLogin';
-import FacultyLogin from './pages/login/FacultyLogin';
+import Login from './pages/login/Login';
 
 import Student from './pages/main/Student';
 import StudentCourses from './pages/main/student_pages/StudentCourses';
@@ -23,8 +23,7 @@ function App() {
       <BrowserRouter>
       <Routes>
           <Route path="/" element={<WelcomePage />} />
-          <Route path="/studentlogin" element={<StudentLogin />} />
-          <Route path="/facultylogin" element={<FacultyLogin />} />
+          <Route path="/login" element={<Login />} />
 
           {/* Student routes */}
           <Route path="/student" element={<Student />}>
@@ -38,7 +37,7 @@ function App() {
 
           {/* Instructor routes */}
           <Route path="/instructor" element={<Instructor />}>
-            <Route path="inventory" element={<InstructorMyCourses />} />
+            <Route path="mycourses" element={<InstructorMyCourses />} />
             <Route path="profile" element={<InstructorProfile />} />
           </Route>
         </Routes>

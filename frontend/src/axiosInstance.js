@@ -8,6 +8,21 @@ const axiosInstance = axios.create({
     withCredentials: true,
 });
 
+axiosInstance.interceptors.request.use(
+    config => {
+
+        // If the JWT token is in local storage, add it to the header
+        const token = sessionStorage.getItem("jwtToken");
+        if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
 axiosInstance.interceptors.response.use(
     response => {
         // Resolve the promise for successful responses

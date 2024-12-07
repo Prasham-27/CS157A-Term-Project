@@ -11,14 +11,9 @@ export default function WelcomePage() {
         <VStack>
             <Text fontWeight="bold" fontSize="2xl">Welcome!</Text>
             <HStack>
-                <Link to="/studentlogin">
+                <Link to="/login">
                 <Button colorScheme="blue" size="lg">
-                    Student
-                </Button>
-                </Link>
-                <Link to="/facultylogin">
-                <Button colorScheme="blue" size="lg">
-                    Faculty
+                    login
                 </Button>
                 </Link>
             </HStack>

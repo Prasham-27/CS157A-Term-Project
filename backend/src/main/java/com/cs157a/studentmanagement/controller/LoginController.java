@@ -1,72 +1,114 @@
-/**
- * The API endpoints to signup different roles
- */
-
 package com.cs157a.studentmanagement.controller;
 
+import com.cs157a.studentmanagement.service.JwtService;
+import com.cs157a.studentmanagement.service.UserDetailsServiceImpl;
 import com.cs157a.studentmanagement.service.UsersService;
+import com.cs157a.studentmanagement.utils.ResponseHelper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import jakarta.servlet.http.HttpSession;
 
-import com.cs157a.studentmanagement.utils.enums.Role;
-
-import java.util.Map;
+import java.util.*;
 
 
+/**
+ * Handles the login API requests
+ */
 @Controller
 @RequestMapping("/api")
 public class LoginController {
 
-   @Autowired
    private UsersService usersService;
 
-   // Handle login form submission and create a session attribute
-   @PostMapping("/login/student")
-   public ResponseEntity<String> studentLogin(@RequestBody Map<String, Object> request,
-                                              HttpSession session) {
-      return loginUser(request, Role.STUDENT, session);
+   private UserDetailsServiceImpl userDetailsService;
+
+   @Autowired
+   private AuthenticationManager authenticationManager;
+
+   private final JwtService jwtService;
+
+   public LoginController(
+           UsersService usersService,
+           UserDetailsServiceImpl userDetails,
+           JwtService jwtService
+   ) {
+      this.usersService = usersService;
+      this.userDetailsService = userDetails;
+      this.jwtService = jwtService;
    }
 
-   // Handle login form submission and create a session attribute
-   @PostMapping("/login/instructor")
-   public ResponseEntity<String> instructorLogin(@RequestBody Map<String, Object> request,
-                                                 HttpSession session) {
-      return loginUser(request, Role.INSTRUCTOR, session);
-   }
-
+   /**
+    * Logs out a user by destroying their session
+    *
+    * @param session The session
+    * @return        200 = success
+    */
    @GetMapping("/logout")
-   public ResponseEntity<String> logout(HttpSession session) {
-      session.invalidate();
+   public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+
+      // TODO remove this, this does nothing for JWT tokens
+      HttpSession session = request.getSession(false);
+      if (session != null) {
+         session.invalidate();
+      }
+      SecurityContextHolder.getContext().setAuthentication(null);
+
       return ResponseEntity.ok("Success");
    }
 
    /**
-    * Helper function that logs in user based on the role we desire
+    * Logs in the user and states their session
     *
     * @param request   Holds the userId and password
     * @param session   The current session
-    * @return          200 = success, 400 = fail
+    * @return          200 = success, 400 = fail, and the path the
+    *                  user should be redirected to
     */
-   private ResponseEntity<String> loginUser(@RequestBody Map<String, Object> request,
-                                            Role role, HttpSession session) {
+   @PostMapping("/login")
+   public ResponseEntity<String> loginUser(@RequestBody Map<String, Object> request,
+                                            HttpSession session) {
 
       String password = (String)request.get("password");
       Long userId = Long.parseLong((String)request.get("user_id"));
 
       // Check if the password matches
-      if (!usersService.checkPassword(password, userId) ||
-              !usersService.roleIsEqual(userId, role))
-         return ResponseEntity.badRequest().body("Invalid ID, password, or role");
+      if (userId == null || password == null || !usersService.checkPassword(password, userId))
+         return ResponseEntity.badRequest().body("Invalid ID, or password");
 
-      // Store username in session
-      session.setAttribute("id", userId);
-      session.setAttribute("role", role);
+      String jwtToken;
+      String roleName = usersService.getRoleName(userId);
 
-      return ResponseEntity.ok("Success");
+      try {
+
+         // Get the user details
+         UserDetails userDetails =
+                 userDetailsService.loadUserByUsername(userId.toString());
+
+         // Generate JWT token for authenticated user
+         jwtToken = jwtService.generateToken(userDetails);
+      }
+      catch (BadCredentialsException e) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid ID, or password");
+      }
+
+      return ResponseHelper.createJsonResponse(Map.of(
+              "token", jwtToken,
+              "expiration", jwtService.getExpirationTime(),
+              "message", "Login Success!",
+              "status", 200,
+              "redirect", String.format("/%s", roleName.toLowerCase())
+      ));
    }
 }
