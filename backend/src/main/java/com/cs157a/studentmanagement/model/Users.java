@@ -2,6 +2,8 @@ package com.cs157a.studentmanagement.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 /**
  * Defines the user accounts table
  */
@@ -29,10 +31,23 @@ public class Users {
            columnDefinition = "VARCHAR(30)")
    private String lastName;
 
-   // TODO Add a check to see if the role exists in the roles table
    @ManyToOne
    @JoinColumn(name = "role_id", nullable = false) // CONSTRAINT Foreign key
    private Roles role;
+
+   /**
+    * The destination of a FORIEGN KEY, the actual constraint is in students
+    */
+   @OneToOne(mappedBy = "student")
+   private Students student;
+
+   /**
+    * The destination of a FORIEGN KEY, the actual constraint is in instructors
+    */
+   @OneToOne(mappedBy = "student")
+   private Instructors instructor;
+
+
 
    public Long getId() {
       return id;

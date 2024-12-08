@@ -12,6 +12,7 @@ export default function LogoutButton() {
                     let response = await axiosInstance.get(`/api/logout`);
 
                     // Remove jwt token
+                    sessionStorage.clear(); 
                     sessionStorage.removeItem("jwtToken");
                     console.log(response);
                     if (response.status !== 200)

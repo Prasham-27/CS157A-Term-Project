@@ -1,5 +1,6 @@
 package com.cs157a.studentmanagement.configuration;
 
+import com.cs157a.studentmanagement.configuration.entrypoint.JwtAuthenticationEntryPoint;
 import com.cs157a.studentmanagement.configuration.filters.JwtAuthenticationFilter;
 import com.cs157a.studentmanagement.utils.enums.Role;
 import org.springframework.context.annotation.Bean;
@@ -17,18 +18,24 @@ public class SecurityFilterChainConfig {
 
    private final AuthenticationProvider authenticationProvider;
    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
    public SecurityFilterChainConfig(
            AuthenticationProvider authenticationProvider,
-           JwtAuthenticationFilter jwtAuthenticationFilter) {
+           JwtAuthenticationFilter jwtAuthenticationFilter,
+           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
       this.authenticationProvider = authenticationProvider;
       this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+      this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
    }
 
    @Bean
    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
       http
               .csrf().disable()
+              .exceptionHandling()
+              .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+              .and()
               .cors()
               .and()
               .authorizeRequests()

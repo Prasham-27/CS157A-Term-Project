@@ -1,4 +1,5 @@
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 const axiosInstance = axios.create({
     baseURL: "http://localhost:8080/",
@@ -29,6 +30,26 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     error => {
+
+        // Handle expired JWT token
+        const originalRequest = error.config;
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+
+            // Check if the error is due to expired JWT
+            originalRequest._retry = true;
+
+            // Destroy the JWT token and destroy session all together
+            sessionStorage.removeItem('jwtToken');
+            sessionStorage.clear();
+
+            alert("Your session has expired. Please log in again.");
+            
+            const navigate = useNavigate();
+            navigate("/"); // Navigate back to root
+
+            return Promise.reject(error);
+        }
+
         // For responses with status code 400-499, resolve the promise with the response
         // This means that requests that return 4xx status code won't get caught by a `catch` block
         if (error.response && error.response.status >= 400 && error.response.status < 500) {

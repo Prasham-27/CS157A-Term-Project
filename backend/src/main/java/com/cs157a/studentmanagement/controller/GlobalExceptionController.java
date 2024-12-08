@@ -1,5 +1,6 @@
 package com.cs157a.studentmanagement.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -20,6 +21,11 @@ public class GlobalExceptionController {
 
    @ExceptionHandler(Exception.class)
    public ResponseEntity<String> handleException(Exception ex) {
+
+      // Ignore
+      if (ex instanceof ExpiredJwtException) {
+         return null;
+      }
       ex.printStackTrace();  // Log the exception
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
               .body("An unexpected error occurred.");

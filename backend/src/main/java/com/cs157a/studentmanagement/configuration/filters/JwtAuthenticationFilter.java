@@ -2,6 +2,7 @@ package com.cs157a.studentmanagement.configuration.filters;
 
 import com.cs157a.studentmanagement.service.JwtService;
 import com.cs157a.studentmanagement.service.UserDetailsServiceImpl;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +64,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
          // Get jwt token and user's primary key
          final String jwt = authHeader.substring(7);
+
+         // Check if token is expired
+         if (jwtService.isTokenExpired(jwt)) {
+            // Token expired, return 401 Unauthorized response
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                    "Token invalid");
+            return;
+         }
+
          final String userId = jwtService.extractUsername(jwt);
 
          // Get the Spring authentication data
