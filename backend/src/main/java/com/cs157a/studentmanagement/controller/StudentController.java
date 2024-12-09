@@ -39,6 +39,10 @@ public class StudentController {
       this.departmentAndCoursesService = departmentAndCoursesService;
    }
 
+   /**
+    * @param session
+    * @return        Student profile info such as name, email, major, etc
+    */
    @GetMapping("/info")
    public ResponseEntity<String> getStudentInfo(HttpSession session) {
       StudentInfo studentInfo = studentsService.getProfile(getStudentId());

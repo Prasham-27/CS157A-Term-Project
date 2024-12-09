@@ -51,7 +51,7 @@ public class DepartmentAndCoursesDao {
    public List<Course> findAllCoursesFromDepartment(Integer deptId) {
       String sql = "SELECT c.course_id, c.course_num, ci.course_name, ci.points "
               + "FROM courses AS c LEFT OUTER JOIN course_info AS ci ON "
-              + "c.course_id = ci.course_id WHERE c.dept_id = ? GROUP BY c.course_id";
+              + "c.course_id = ci.course_id WHERE c.dept_id = ?";
 
       // Run the query
       return DaoHelper.executeQuery(
@@ -89,13 +89,13 @@ public class DepartmentAndCoursesDao {
 
    public List<InstructorCourseInfo> findInstructorsCourseInfo(Integer courseId) {
       StringBuilder sql = new StringBuilder();
-      sql.append("SELECT itc.max_enrollment, itc.num_enrolled, itc.start_time, itc.end_time, ");
-      sql.append(" string_agg(itcd.day ORDER BY itcd.day ASC, ',') AS days, ");
+      sql.append("SELECT itc.instructor_course_id, itc.max_enrollment, itc.num_enrolled, itc.start_time, itc.end_time, ");
+      sql.append(" string_agg(itcd.day::text, ',' ORDER BY itcd.day ASC) AS days, ");
       sql.append("u.first_name, u.last_name FROM instructor_to_courses AS itc INNER JOIN ");
       sql.append("instructor_to_courses_days AS itcd ON itc.instructor_course_id = itcd.instructor_course_id ");
       sql.append("INNER JOIN users AS u ON itc.instructor_id = u.user_id ");
       sql.append("WHERE itc.course_id = ? ");
-      sql.append("GROUP BY itc.max_enrollment, itc.num_enrolled, itc.start_time, itc.end_time, u.first_name, u.last_name");
+      sql.append("GROUP BY itc.instructor_course_id, itc.max_enrollment, itc.num_enrolled, itc.start_time, itc.end_time, u.first_name, u.last_name");
 
       return DaoHelper.executeQuery(
               dataSource,
@@ -108,6 +108,7 @@ public class DepartmentAndCoursesDao {
                             DaoHelper.daysStringToList(rs.getString("days"));
 
                     result.add(new InstructorCourseInfo(
+                            rs.getInt("instructor_course_id"),
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getInt("max_enrollment"),

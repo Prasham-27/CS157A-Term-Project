@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class InstructorCourseInfo {
 
+   @JsonProperty("instructor_course_id")
+   private Integer instructorCourseId;
+
    @JsonProperty("first_name")
    private String firstName;
 
@@ -33,6 +36,7 @@ public class InstructorCourseInfo {
    private List<Days> courseDays;
 
    public InstructorCourseInfo(
+           Integer instructorCourseId,
            String firstName,
            String lastName,
            Integer maxEnrollment,
@@ -41,6 +45,7 @@ public class InstructorCourseInfo {
            Time endTime,
            List<Days> courseDays
    ) {
+      this.instructorCourseId = instructorCourseId;
       this.firstName = firstName;
       this.lastName = lastName;
       this.maxEnrollment = maxEnrollment;

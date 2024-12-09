@@ -11,7 +11,7 @@ import StudentMyCourses from './pages/main/student_pages/StudentMyCourses';
 import StudentGrades from './pages/main/student_pages/StudentGrades';
 import StudentProfile from './pages/main/student_pages/StudentProfile';
 import StudentDepartments from './pages/main/student_pages/StudentDepartments';
-import StudentCourseInfo from './pages/main/student_pages/CourseInfo';
+import StudentCourseInfo from './pages/main/student_pages/StudentCourseInfo';
 
 import Instructor from './pages/main/Instructor';
 import InstructorMyCourses from './pages/main/instructor_pages/InstructorMyCourses';
@@ -30,8 +30,8 @@ function App() {
             <Route index element={<Navigate to="mycourses" replace />} /> 
             <Route path="mycourses" element={<StudentMyCourses />} />
             <Route path="depts" element={<StudentDepartments />} />
-            <Route path="depts/:id/courses" element={<StudentCourses />} />
-            <Route path="course-info/:id" element={<StudentCourseInfo />} />
+            <Route path="depts/:dept_id/courses" element={<StudentCourses />} />
+            <Route path="depts/:dept_id/courses/:course_id" element={<StudentCourseInfo />} />
             <Route path="grades" element={<StudentGrades />} />
             <Route path="profile" element={<StudentProfile />} />
           </Route>
