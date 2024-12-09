@@ -587,10 +587,10 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- Instructor 13: Sarah Martin (Civil Engineering)
-INSERT INTO instructor_to_courses (instructor_id, course_id, max_enrollment, num_enrolled, start_time, end_time)
+INSERT INTO instructor_to_courses (instructor_id, course_id, max_enrollment, num_enrolled, start_time, end_time, is_finished)
 VALUES
-(13, 5, 30, 0, '09:00', '10:15'), -- CE 101
-(13, 6, 25, 0, '10:30', '11:45')  -- CE 102
+(13, 5, 30, 0, '09:00', '10:15', TRUE), -- CE 101
+(13, 6, 25, 0, '10:30', '11:45', FALSE)  -- CE 102
 ON CONFLICT DO NOTHING;
 
 -- Assign days for Sarah Martin
@@ -721,8 +721,8 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-  (1, 1, 'A', CURRENT_TIMESTAMP, 'COMPLETED'),
-  (2, 1, 'A-', CURRENT_TIMESTAMP, 'COMPLETED')
+  (1, 1, 'A', CURRENT_TIMESTAMP, 'ENROLLED'),
+  (2, 1, 'A-', CURRENT_TIMESTAMP, 'ENROLLED')
   ON CONFLICT DO NOTHING;
 
 -- Enroll Student 2 into ME101
@@ -734,7 +734,7 @@ VALUES
 
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-  (3, 2, 'B+', CURRENT_TIMESTAMP, 'COMPLETED'),
+  (3, 2, 'B+', CURRENT_TIMESTAMP, 'ENROLLED'),
   (4, 2, 'N/A', CURRENT_TIMESTAMP, 'DROPPED')
   ON CONFLICT DO NOTHING;
 
@@ -749,13 +749,13 @@ VALUES
 -- Enroll Student 4 (Electrical Engineering) in course 101
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-(7, 4, 'A', CURRENT_TIMESTAMP, 'COMPLETED')
+(7, 4, 'A', CURRENT_TIMESTAMP, 'ENROLLED')
   ON CONFLICT DO NOTHING;
 
 -- Enroll Student 5 (Biology) in course 101
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-(9, 5, 'A-', CURRENT_TIMESTAMP, 'COMPLETED')
+(9, 5, 'A-', CURRENT_TIMESTAMP, 'ENROLLED')
   ON CONFLICT DO NOTHING;
 
 -- Enroll Student 6 (Chemistry) in course 101
@@ -767,7 +767,7 @@ VALUES
 -- Enroll Student 7 (Physics) in course 101
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-(11, 7, 'B+', CURRENT_TIMESTAMP, 'COMPLETED')
+(11, 7, 'B+', CURRENT_TIMESTAMP, 'ENROLLED')
   ON CONFLICT DO NOTHING;
 
 -- Enroll Student 8 (Psychology) in course 101
@@ -779,7 +779,7 @@ VALUES
 -- Enroll Student 9 (Economics) in course 101
 INSERT INTO enrollments (instructor_course_id, student_id, grade, enrollment_date, status)
 VALUES
-(13, 9, 'B', CURRENT_TIMESTAMP, 'COMPLETED')
+(13, 9, 'B', CURRENT_TIMESTAMP, 'ENROLLED')
   ON CONFLICT DO NOTHING;
 
 

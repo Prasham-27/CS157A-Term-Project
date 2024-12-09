@@ -17,6 +17,9 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudentCourse {
 
+   @JsonProperty("instructor_course_id")
+   private Integer instructorCourseId;
+
    @JsonProperty("instructor_first_name")
    private String instructorFirstName;
 
@@ -54,6 +57,7 @@ public class StudentCourse {
    private Grades grade;
 
    public StudentCourse(
+           Integer instructorCourseId,
            String instructorFirstName,
            String instructorLastName,
            String courseName,
@@ -66,6 +70,7 @@ public class StudentCourse {
            Timestamp enrollmentDate,
            EnrollmentStatus enrollmentStatus,
            Grades grade) {
+      this.instructorCourseId = instructorCourseId;
       this.instructorFirstName = instructorFirstName;
       this.instructorLastName = instructorLastName;
       this.courseName = courseName;
@@ -78,6 +83,14 @@ public class StudentCourse {
       this.enrollmentDate = enrollmentDate;
       this.enrollmentStatus = enrollmentStatus;
       this.grade = grade;
+   }
+
+   public Integer getInstructorCourseId() {
+      return instructorCourseId;
+   }
+
+   public void setInstructorCourseId(Integer instructorCourseId) {
+      this.instructorCourseId = instructorCourseId;
    }
 
    public String getInstructorFirstName() {

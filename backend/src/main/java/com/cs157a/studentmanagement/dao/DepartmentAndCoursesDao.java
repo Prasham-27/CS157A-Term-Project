@@ -122,4 +122,22 @@ public class DepartmentAndCoursesDao {
               }
       );
    }
+
+   /**
+    * @param instructorCourseId The course taught by an instructor
+    * @return                   True if the course is full
+    */
+   public Boolean checkCourseIsFull(Integer instructorCourseId) {
+      String sql = "SELECT (num_enrolled >= max_enrollment) AS full FROM " +
+              "instructor_to_courses WHERE instructor_course_id = ?";
+      return DaoHelper.executeQuery(
+              dataSource,
+              sql,
+              pstmt -> pstmt.setInt(1, instructorCourseId),
+              rs -> rs.getBoolean("full")
+      );
+   }
+
+
+
 }

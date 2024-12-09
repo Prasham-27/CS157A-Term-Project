@@ -63,7 +63,7 @@ public class StudentsDao {
       // Build the query
       StringBuilder sql = new StringBuilder();
       sql.append("SELECT c.course_num, ci.course_name, ci.points, ");
-      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, ");
+      sql.append("d.dept_abbreviation, itc.instructor_course_id, itc.start_time, itc.end_time, ");
       sql.append("e.enrollment_date, e.status, e.grade, u.first_name, u.last_name, ");
       sql.append("string_agg(itcd.day::text, ',' ORDER BY itcd.day ASC) AS days ");
       sql.append("FROM courses AS c ");
@@ -75,7 +75,7 @@ public class StudentsDao {
       sql.append("INNER JOIN enrollments AS e ON e.instructor_course_id = itc.instructor_course_id ");
       sql.append("WHERE e.student_id = ? AND (e.status = 'ENROLLED' OR e.status = 'DROPPED') ");
       sql.append("GROUP BY c.course_num, ci.course_name, ci.points, ");
-      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, ");
+      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id, ");
       sql.append("e.enrollment_date, e.status, e.grade, u.first_name, u.last_name");
 
       // Get the query
@@ -95,6 +95,7 @@ public class StudentsDao {
 
                     // Add course to result list
                     result.add(new StudentCourse(
+                            rs.getInt("instructor_course_id"),
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getString("course_name"),
@@ -151,6 +152,7 @@ public class StudentsDao {
 
                     // Add course to result list
                     result.add(new StudentCourse(
+                            null,
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getString("course_name"),
@@ -195,4 +197,118 @@ public class StudentsDao {
       );
    }
 
+   /**
+    * Checks if the student has enrolled or completed a course with the
+    * same department number or ID
+    *
+    * @param instructorCourseId The instructor course the student is enrolling into
+    * @param studentId          The student trying to enroll
+    * @return                   True if enrolled or completed a course with the
+    *                           same ID. False if no, or the course is dropped
+    */
+   public Boolean checkCourseCompleteOrEnrolled(Integer instructorCourseId, Integer studentId) {
+      StringBuilder sql = new StringBuilder();
+      sql.append("SELECT EXISTS (SELECT e.student_id FROM enrollments AS e ");
+      sql.append("INNER JOIN instructor_to_courses AS ic ON e.instructor_course_id = ic.instructor_course_id ");
+      sql.append("WHERE e.student_id = ? AND ic.course_id = ");
+      sql.append("(SELECT course_id FROM instructor_to_courses WHERE instructor_course_id = ? ) ");
+      sql.append(" AND (e.status = 'ENROLLED' OR e.status = 'COMPLETED')) AS is_enrolled_or_completed");
+
+      return DaoHelper.executeQuery(
+              dataSource,
+              sql.toString(),
+              pstmt -> {
+                 pstmt.setInt(1, studentId);
+                 pstmt.setInt(2, instructorCourseId);
+              },
+              rs -> rs.getBoolean("is_enrolled_or_completed")
+      );
+   }
+
+   /**
+    * Checks if the student has dropped or completed a course with the
+    * same department number or ID
+    *
+    * @param instructorCourseId The instructor course the student is enrolling into
+    * @param studentId          The student trying to enroll
+    * @return                   True if dropped or completed a course with the
+    *                           same ID. False if no, or the course is enrolled
+    */
+   public Boolean checkCourseCompleteOrDropped(Integer instructorCourseId, Integer studentId) {
+      StringBuilder sql = new StringBuilder();
+      sql.append("SELECT EXISTS (SELECT e.student_id FROM enrollments AS e ");
+      sql.append("INNER JOIN instructor_to_courses AS ic ON e.instructor_course_id = ic.instructor_course_id ");
+      sql.append("WHERE e.student_id = ? AND ic.course_id = ");
+      sql.append("(SELECT course_id FROM instructor_to_courses WHERE instructor_course_id = ? ) ");
+      sql.append(" AND (e.status = 'COMPLETED' OR e.status = 'DROPPED')) AS is_dropped_or_completed");
+
+      return DaoHelper.executeQuery(
+              dataSource,
+              sql.toString(),
+              pstmt -> {
+                 pstmt.setInt(1, studentId);
+                 pstmt.setInt(2, instructorCourseId);
+              },
+              rs -> rs.getBoolean("is_dropped_or_completed")
+      );
+   }
+
+   /**
+    * Enrolls a student into a course, updates to ENROLLED if the course is
+    * dropped.
+    *
+    * Assumption: You have checked that the student hasn't ENROLLED or completed
+    *             a course with the same course_id, and that the course isn't
+    *             full.
+    *
+    * NOTE: A trigger will update the number of enrolled in the class for us.
+    *
+    * @param instructorCourseId Course that the student enrolls into
+    * @param studentId          The student who is enrolling
+    * @return                   The number of rows inserted
+    */
+   public Integer enrollStudent(Integer instructorCourseId, Integer studentId) {
+      StringBuilder sql = new StringBuilder();
+      sql.append("INSERT INTO enrollments (instructor_course_id, student_id, grade, status, enrollment_date) ");
+      sql.append("VALUES (?, ?, ?::grades, ?::enrollment_status, NOW()) ON CONFLICT (student_id, instructor_course_id) ");
+      sql.append("DO UPDATE SET status = EXCLUDED.status, enrollment_date = NOW()");
+
+      return DaoHelper.executeUpdate(
+              dataSource,
+              sql.toString(),
+              pstmt -> {
+                 pstmt.setInt(1, instructorCourseId);
+                 pstmt.setInt(2, studentId);
+                 pstmt.setString(3, Grades.N_A.toString());
+                 pstmt.setString(4, EnrollmentStatus.ENROLLED.toString());
+              }
+      );
+   }
+
+   /**
+    * Enrolls a student into a course, updates to DROPPED if the course is
+    * ENROLLED
+    *
+    * Assumption: You have checked that the student hasn't DROPPED or completed
+    *             The same course already.
+    *
+    * NOTE: A trigger will update the number of enrolled in the class for us.
+    *
+    * @param instructorCourseId Course that the student enrolls into
+    * @param studentId          The student who is enrolling
+    * @return                   The number of rows inserted
+    */
+   public Integer dropStudent(Integer instructorCourseId, Integer studentId) {
+      StringBuilder sql = new StringBuilder();
+      sql.append("UPDATE enrollments SET status = 'DROPPED' WHERE instructor_course_id = ? AND student_id = ?");
+
+      return DaoHelper.executeUpdate(
+              dataSource,
+              sql.toString(),
+              pstmt -> {
+                 pstmt.setInt(1, instructorCourseId);
+                 pstmt.setInt(2, studentId);
+              }
+      );
+   }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
@@ -182,6 +183,44 @@ public class StudentController {
       }
 
       return ResponseEntity.ok(json);
+   }
+
+   @PostMapping("/enroll/{instructor_course_id}")
+   public ResponseEntity<String> enrollIntoCourse(
+           @PathVariable("instructor_course_id") Integer instructorCourseId
+   ) {
+
+      Integer studentId = getStudentId();
+
+      // Check if user is already enrolled or completed this course
+      if (studentsService.checkEnrolledOrCompleted(studentId, instructorCourseId))
+         return ResponseEntity.badRequest().body("ERROR: Course with same id already ENROLLED or COMPLETED");
+
+      // TODO OPTIONAL, check if there is a time conflict
+
+      // Attempt to enroll the student
+      if (!studentsService.enrollStudentIntoCourse(studentId, instructorCourseId))
+         return ResponseEntity.badRequest().body("ERROR: Course is likely full");
+
+      return ResponseEntity.ok("Enrollment successful!");
+   }
+
+   @PostMapping("/drop/{instructor_course_id}")
+   public ResponseEntity<String> dropCourse(
+           @PathVariable("instructor_course_id") Integer instructorCourseId
+   ) {
+
+      Integer studentId = getStudentId();
+
+      // Check if the course is already dropped or completed
+      if (studentsService.checkDroppedOrCompleted(studentId, instructorCourseId))
+         return ResponseEntity.badRequest().body("ERROR: Course already DROPPED or COMPLETED");
+
+      // Attempt to drop the student
+      if (!studentsService.dropStudentFromCourse(studentId, instructorCourseId))
+         return ResponseEntity.badRequest().body("ERROR: Failed to drop class");
+
+      return ResponseEntity.ok("Student Successfully Dropped!");
    }
 
    /**

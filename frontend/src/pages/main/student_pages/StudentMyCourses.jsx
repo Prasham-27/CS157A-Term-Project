@@ -6,7 +6,8 @@ import {
     Grid,
     GridItem,
     HStack,
-    VStack
+    VStack,
+    Button
     } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { EnrollmentStatus } from "../../../enums/enums.js"
@@ -26,7 +27,7 @@ export default function StudentMyCourses() {
             if (response.status === 200) {  
                 const enrolled = [];
                 const dropped = [];
-                response.data.forEach(
+                response.data && response.data.forEach(
                     (courseInfo) => {
                         if (courseInfo.enrollment_status === EnrollmentStatus.ENROLLED)
                             enrolled.push(courseInfo);
@@ -75,6 +76,17 @@ export default function StudentMyCourses() {
     );
 }
 
+const dropCourse = async (instructor_course_id) => {
+    try {
+      let response = await axiosInstance.post(`/api/student/drop/${instructor_course_id}`);
+      console.log(response.data);
+      alert(response.data);
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  };
+
 function CourseComponent({ course }) {
     return (
       <> 
@@ -101,7 +113,14 @@ function CourseComponent({ course }) {
                     <Text className={styles.infoText}>Points</Text>
                     <Text>{course.points}</Text>
                 </GridItem>
-            </Grid>     
+            </Grid> 
+            {(course.enrollment_status !== EnrollmentStatus.DROPPED) && 
+            <Button 
+                backgroundColor={"red.500"} 
+                onClick={() => dropCourse(course.instructor_course_id)}
+            >
+                Drop
+            </Button>} 
         </VStack>
       </>
     );

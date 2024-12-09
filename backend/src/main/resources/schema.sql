@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS instructor_to_courses (
   num_enrolled INTEGER NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
+  is_finished BOOLEAN NOT NULL DEFAULT (FALSE),
   UNIQUE (instructor_id, course_id)
 );
 
@@ -101,6 +102,60 @@ CREATE TABLE IF NOT EXISTS instructor_to_courses_days (
   "day" DAYS NOT NULL,
   PRIMARY KEY (instructor_course_id, "day")
 );
+
+
+--
+-- Add triggers
+--
+
+-- Trigger to increment or decrement enrollments
+CREATE OR REPLACE FUNCTION update_num_enrolled()
+RETURNS TRIGGER AS '
+BEGIN
+    -- Handle INSERT, by incrementing
+    IF (TG_OP = ''INSERT'') THEN
+        UPDATE instructor_to_courses
+        SET num_enrolled = num_enrolled + 1
+        WHERE instructor_course_id = NEW.instructor_course_id;
+    END IF;
+
+    -- Handle UPDATE when status changes to ''ENROLLED'', by decrementing
+    IF (TG_OP = ''UPDATE'' AND NEW.status = ''ENROLLED'' AND OLD.status = ''DROPPED'') THEN
+        UPDATE instructor_to_courses
+        SET num_enrolled = num_enrolled + 1
+        WHERE instructor_course_id = NEW.instructor_course_id;
+    END IF;
+
+    -- Handle UPDATE when status changes to ''ENROLLED''
+    IF (TG_OP = ''UPDATE'' AND NEW.status = ''DROPPED'' AND OLD.status = ''ENROLLED'') THEN
+        UPDATE instructor_to_courses
+        SET num_enrolled = num_enrolled - 1
+        WHERE instructor_course_id = NEW.instructor_course_id;
+    END IF;
+
+    RETURN NEW;
+END;
+' LANGUAGE plpgsql;
+
+-- Increment num_enrollments on INSERT
+DROP TRIGGER IF EXISTS after_enrollment_insert ON enrollments;
+
+CREATE TRIGGER after_enrollment_insert
+AFTER INSERT
+ON enrollments
+FOR EACH ROW
+WHEN (NEW.status = 'ENROLLED')
+EXECUTE FUNCTION update_num_enrolled();
+
+--  Increment or decrement num_enrollments on UPDATE
+DROP TRIGGER IF EXISTS after_enrollment_update ON enrollments;
+
+CREATE TRIGGER after_enrollment_update
+AFTER UPDATE OF status
+ON enrollments
+FOR EACH ROW
+WHEN ((NEW.status = 'ENROLLED' AND OLD.status = 'DROPPED') OR (NEW.status = 'DROPPED' AND OLD.status = 'ENROLLED') )
+EXECUTE FUNCTION update_num_enrolled();
 
 
 

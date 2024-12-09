@@ -23,7 +23,7 @@ export default function StudentGrades() {
             let response = await axiosInstance.get("/api/student/grades");
             console.log(response.data);
             if (response.status === 200) {  
-                setCourses(response.data.courses);
+                setCourses(response.data.courses || []);
                 setGpa(response.data.gpa);
             }
         } 
