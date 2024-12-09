@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import WelcomePage from './pages/root/WelcomePage';
@@ -10,7 +10,7 @@ import StudentCourses from './pages/main/student_pages/StudentCourses';
 import StudentMyCourses from './pages/main/student_pages/StudentMyCourses';
 import StudentGrades from './pages/main/student_pages/StudentGrades';
 import StudentProfile from './pages/main/student_pages/StudentProfile';
-import StudentDepartmentCourses from './pages/main/student_pages/DepartmentCourses';
+import StudentDepartments from './pages/main/student_pages/StudentDepartments';
 import StudentCourseInfo from './pages/main/student_pages/CourseInfo';
 
 import Instructor from './pages/main/Instructor';
@@ -27,12 +27,13 @@ function App() {
 
           {/* Student routes */}
           <Route path="/student" element={<Student />}>
+            <Route index element={<Navigate to="mycourses" replace />} /> 
             <Route path="mycourses" element={<StudentMyCourses />} />
-            <Route path="courses" element={<StudentCourses />} />
+            <Route path="depts" element={<StudentDepartments />} />
+            <Route path="depts/:id/courses" element={<StudentCourses />} />
+            <Route path="course-info/:id" element={<StudentCourseInfo />} />
             <Route path="grades" element={<StudentGrades />} />
             <Route path="profile" element={<StudentProfile />} />
-            <Route path="dept-courses/:id" element={<StudentDepartmentCourses />} />
-            <Route path="course-info/:id" element={<StudentCourseInfo />} />
           </Route>
 
           {/* Instructor routes */}

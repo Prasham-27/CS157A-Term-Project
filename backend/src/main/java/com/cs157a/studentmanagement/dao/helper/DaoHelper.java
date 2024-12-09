@@ -1,10 +1,14 @@
 package com.cs157a.studentmanagement.dao.helper;
 
+import com.cs157a.studentmanagement.utils.enums.Days;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DaoHelper {
 
@@ -41,7 +45,7 @@ public class DaoHelper {
    }
 
    /**
-    * Executes a JDBC update
+    * Executes a JDBC updates such as INSERT, UPDATE, etc
     *
     * @param dataSource       The datasource for the current dao
     * @param sql              The SQL statement
@@ -60,6 +64,21 @@ public class DaoHelper {
          e.printStackTrace();
          return -1;
       }
+   }
+
+   public static List<Days> daysStringToList(String daysString) {
+      // Convert the days
+      List<Days> daysList = new ArrayList<>();
+
+      for (String day : daysString.split(",")) {
+         try {
+            daysList.add(Days.valueOf(day)); // Convert string to enum
+         }
+         catch (IllegalArgumentException e) {
+            System.err.println("Invalid day abbreviation: " + day);
+         }
+      }
+      return daysList;
    }
 }
 

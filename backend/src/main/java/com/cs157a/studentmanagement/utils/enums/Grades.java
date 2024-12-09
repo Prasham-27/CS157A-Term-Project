@@ -15,4 +15,16 @@ public enum Grades {
          default: return this.name();
       }
    }
+
+   public static Grades getEnum(String string) throws IllegalArgumentException {
+      switch (string) {
+         case "A-": return A_MINUS;
+         case "B+": return B_PLUS;
+         case "B-": return B_MINUS;
+         case "C+": return C_PLUS;
+         case "C-": return C_MINUS;
+         case "N/A": return N_A;
+         default: return valueOf(string);
+      }
+   }
 }

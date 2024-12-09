@@ -2,7 +2,6 @@ package com.cs157a.studentmanagement.configuration.filters;
 
 import com.cs157a.studentmanagement.service.JwtService;
 import com.cs157a.studentmanagement.service.UserDetailsServiceImpl;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
