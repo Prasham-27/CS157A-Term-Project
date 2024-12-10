@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +36,7 @@ public class InstructorsDao {
       StringBuilder sql = new StringBuilder();
       sql.append("SELECT c.course_num, ci.course_name, ci.points, ");
       sql.append("d.dept_abbreviation, itc.instructor_course_id, itc.start_time, itc.end_time, ");
+      sql.append("itc.max_enrollment, itc.num_enrolled, ");
       sql.append("string_agg(itcd.day::text, ',' ORDER BY itcd.day ASC) AS days ");
       sql.append("FROM courses AS c ");
       sql.append("INNER JOIN course_info AS ci ON c.course_id = ci.course_id ");
@@ -45,7 +45,7 @@ public class InstructorsDao {
       sql.append("INNER JOIN instructor_to_courses_days AS itcd ON itcd.instructor_course_id = itc.instructor_course_id ");
       sql.append("WHERE itc.instructor_id = ? AND itc.is_finished = FALSE ");
       sql.append("GROUP BY c.course_num, ci.course_name, ci.points, ");
-      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id");
+      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id, itc.max_enrollment, itc.num_enrolled");
 
       return DaoHelper.executeQuery(
               dataSource,
@@ -57,12 +57,14 @@ public class InstructorsDao {
                     result.add(new InstructorCourse(
                             rs.getInt("instructor_course_id"),
                             rs.getString("course_name"),
-                            rs.getInt("course_number"),
+                            rs.getInt("course_num"),
                             rs.getString("dept_abbreviation"),
                             rs.getDouble("points"),
                             rs.getTime("start_time"),
                             rs.getTime("end_time"),
-                            DaoHelper.daysStringToList(rs.getString("days"))
+                            DaoHelper.daysStringToList(rs.getString("days")),
+                            rs.getInt("max_enrollment"),
+                            rs.getInt("num_enrolled")
                     ));
                  } while (rs.next());
 
@@ -71,23 +73,30 @@ public class InstructorsDao {
       );
    }
 
-   // Instructor views students in their courses
-   // Get the student_id, first and last names, email, major
-
    /**
+    * Allows a search for students in a particular course by first and last name
     *
-    * @param instructorCourseId
+    * @param instructorCourseId The id of the course being searched for students
     */
-   public List<StudentView> findAllStudentsInCourse(Integer instructorCourseId) {
+   public List<StudentView> findStudentsInCourse(Integer instructorCourseId, String searchTerm) {
       StringBuilder sql = new StringBuilder();
-      sql.append("SELECT e.student_id, u.first_name, u.last_name, u.email, s.major ");
+      sql.append("SELECT e.student_id, u.first_name, u.last_name, u.email, m.major_name ");
       sql.append("FROM enrollments AS e INNER JOIN users AS u ON e.student_id = u.user_id ");
-      sql.append("INNER JOIN students AS s ON e.student_id = s.major WHERE e.instructor_course_id = ? ");
+      sql.append("INNER JOIN students AS s ON e.student_id = s.student_id ");
+      sql.append("INNER JOIN majors AS m ON m.major_id = s.major_id WHERE e.instructor_course_id = ? ");
+      sql.append("AND (? IS NULL OR (u.first_name ILIKE ? OR u.last_name ILIKE ?))");
 
       return DaoHelper.executeQuery(
               dataSource,
               sql.toString(),
-              pstmt -> pstmt.setInt(1, instructorCourseId),
+              pstmt -> {
+                 pstmt.setInt(1, instructorCourseId);
+                 pstmt.setString(2, searchTerm); // NULL check
+                 pstmt.setString(3, '%' + searchTerm + '%'); // % Scan around the entire string
+                 pstmt.setString(4, '%' + searchTerm + '%');
+
+                 System.out.println(pstmt.toString());
+              },
               rs -> {
                  List<StudentView> result = new ArrayList<>();
                  do {
@@ -96,8 +105,7 @@ public class InstructorsDao {
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getString("email"),
-                            rs.getString("major")
-
+                            rs.getString("major_name")
                     ));
                  } while (rs.next());
 
@@ -115,6 +123,7 @@ public class InstructorsDao {
       StringBuilder sql = new StringBuilder();
       sql.append("SELECT c.course_num, ci.course_name, ci.points, ");
       sql.append("d.dept_abbreviation, itc.instructor_course_id, itc.start_time, itc.end_time, ");
+      sql.append("itc.max_enrollment, itc.num_enrolled, ");
       sql.append("string_agg(itcd.day::text, ',' ORDER BY itcd.day ASC) AS days ");
       sql.append("FROM courses AS c ");
       sql.append("INNER JOIN course_info AS ci ON c.course_id = ci.course_id ");
@@ -123,7 +132,7 @@ public class InstructorsDao {
       sql.append("INNER JOIN instructor_to_courses_days AS itcd ON itcd.instructor_course_id = itc.instructor_course_id ");
       sql.append("WHERE itc.instructor_id = ? AND itc.is_finished = TRUE ");
       sql.append("GROUP BY c.course_num, ci.course_name, ci.points, ");
-      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id");
+      sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id, itc.max_enrollment, itc.num_enrolled");
 
       return DaoHelper.executeQuery(
               dataSource,
@@ -135,12 +144,14 @@ public class InstructorsDao {
                     result.add(new InstructorCourse(
                             rs.getInt("instructor_course_id"),
                             rs.getString("course_name"),
-                            rs.getInt("course_number"),
+                            rs.getInt("course_num"),
                             rs.getString("dept_abbreviation"),
                             rs.getDouble("points"),
                             rs.getTime("start_time"),
                             rs.getTime("end_time"),
-                            DaoHelper.daysStringToList(rs.getString("days"))
+                            DaoHelper.daysStringToList(rs.getString("days")),
+                            rs.getInt("max_enrollment"),
+                            rs.getInt("num_enrolled")
                     ));
                  } while (rs.next());
 

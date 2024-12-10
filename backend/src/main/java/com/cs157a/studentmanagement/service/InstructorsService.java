@@ -39,8 +39,8 @@ public class InstructorsService {
    /**
     * @return All of students in the instructor's course
     */
-   public List<StudentView> getAllStudentsInCourse(Integer instructorCourseId) {
-      return instructorsDao.findAllStudentsInCourse(instructorCourseId);
+   public List<StudentView> getAllStudentsInCourse(Integer instructorCourseId, String searchTerm) {
+      return instructorsDao.findStudentsInCourse(instructorCourseId, searchTerm);
    }
 
    /**

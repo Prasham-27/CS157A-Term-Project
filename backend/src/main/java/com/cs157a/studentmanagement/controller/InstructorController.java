@@ -78,6 +78,35 @@ public class InstructorController {
       return ResponseEntity.ok(json);
    }
 
+   @PostMapping("/mycourses/{instructor_course_id}/students")
+   public ResponseEntity<String> searchInstructorCourseStudents(
+           @PathVariable("instructor_course_id") Integer instructorCourseId,
+           @RequestBody Map<String, Object> request
+   ) {
+
+      String searchTerm = (String)request.get("search_term");
+      if (searchTerm != null && searchTerm.equals(""))
+         searchTerm = null;
+
+      // Get Active courses
+      List<StudentView> students =
+              instructorsService.getAllStudentsInCourse(
+                      instructorCourseId,
+                      (String)request.get("search_term")
+              );
+
+      // Convert to json
+      String json = "";
+      try {
+         json = objectMapper.writeValueAsString(students);
+      }
+      catch (JsonProcessingException e) {
+         e.printStackTrace();
+      }
+
+      return ResponseEntity.ok(json);
+   }
+
    /**
     * @param session
     * @return        Gets the basic courses from the department that the

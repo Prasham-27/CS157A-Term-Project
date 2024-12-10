@@ -233,13 +233,13 @@ public class StudentsDao {
     * @return                   True if dropped or completed a course with the
     *                           same ID. False if no, or the course is enrolled
     */
-   public Boolean checkCourseCompleteOrDropped(Integer instructorCourseId, Integer studentId) {
+   public Boolean checkCourseComplete(Integer instructorCourseId, Integer studentId) {
       StringBuilder sql = new StringBuilder();
       sql.append("SELECT EXISTS (SELECT e.student_id FROM enrollments AS e ");
       sql.append("INNER JOIN instructor_to_courses AS ic ON e.instructor_course_id = ic.instructor_course_id ");
       sql.append("WHERE e.student_id = ? AND ic.course_id = ");
       sql.append("(SELECT course_id FROM instructor_to_courses WHERE instructor_course_id = ? ) ");
-      sql.append(" AND (e.status = 'COMPLETED' OR e.status = 'DROPPED')) AS is_dropped_or_completed");
+      sql.append(" AND (e.status = 'COMPLETED')) AS is_dropped_or_completed");
 
       return DaoHelper.executeQuery(
               dataSource,
@@ -299,7 +299,8 @@ public class StudentsDao {
     */
    public Integer dropStudent(Integer instructorCourseId, Integer studentId) {
       StringBuilder sql = new StringBuilder();
-      sql.append("UPDATE enrollments SET status = 'DROPPED' WHERE instructor_course_id = ? AND student_id = ?");
+      //sql.append("UPDATE enrollments SET status = 'DROPPED' WHERE instructor_course_id = ? AND student_id = ?");
+      sql.append("DELETE FROM enrollments WHERE instructor_course_id = ? AND student_id = ?");
 
       return DaoHelper.executeUpdate(
               dataSource,

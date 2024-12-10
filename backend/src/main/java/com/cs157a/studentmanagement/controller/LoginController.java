@@ -52,7 +52,6 @@ public class LoginController {
    /**
     * Logs out a user by destroying their session
     *
-    * @param session The session
     * @return        200 = success
     */
    @GetMapping("/logout")

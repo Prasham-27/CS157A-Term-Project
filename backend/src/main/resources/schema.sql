@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS instructor_to_courses (
   instructor_id INTEGER NOT NULL CONSTRAINT instructor_id REFERENCES instructors(instructor_id),
   course_id INTEGER NOT NULL CONSTRAINT course_id REFERENCES courses(course_id),
   max_enrollment INTEGER NOT NULL,
-  num_enrolled INTEGER NOT NULL,
+      num_enrolled INTEGER NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   is_finished BOOLEAN NOT NULL DEFAULT (FALSE),
@@ -133,6 +133,13 @@ BEGIN
         WHERE instructor_course_id = NEW.instructor_course_id;
     END IF;
 
+    -- Handle DELETE
+    IF (TG_OP = ''DELETE'') THEN
+        UPDATE instructor_to_courses
+        SET num_enrolled = num_enrolled - 1
+        WHERE instructor_course_id = OLD.instructor_course_id;
+    END IF;
+
     RETURN NEW;
 END;
 ' LANGUAGE plpgsql;
@@ -147,7 +154,7 @@ FOR EACH ROW
 WHEN (NEW.status = 'ENROLLED')
 EXECUTE FUNCTION update_num_enrolled();
 
---  Increment or decrement num_enrollments on UPDATE
+--  Increment or decrement num_enrollments on UPDATE (This is no longer in use)
 DROP TRIGGER IF EXISTS after_enrollment_update ON enrollments;
 
 CREATE TRIGGER after_enrollment_update
@@ -157,6 +164,13 @@ FOR EACH ROW
 WHEN ((NEW.status = 'ENROLLED' AND OLD.status = 'DROPPED') OR (NEW.status = 'DROPPED' AND OLD.status = 'ENROLLED') )
 EXECUTE FUNCTION update_num_enrolled();
 
+--  Decrement on delete
+DROP TRIGGER IF EXISTS after_enrollment_delete ON enrollments;
+CREATE TRIGGER after_enrollment_delete
+AFTER DELETE
+ON enrollments
+FOR EACH ROW
+EXECUTE FUNCTION update_num_enrolled();
 
 
 
