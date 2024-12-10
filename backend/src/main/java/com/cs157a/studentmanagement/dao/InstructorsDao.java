@@ -121,7 +121,7 @@ public class InstructorsDao {
       sql.append("INNER JOIN departments AS d ON c.dept_id = d.dept_id ");
       sql.append("INNER JOIN instructor_to_courses AS itc ON itc.course_id = c.course_id ");
       sql.append("INNER JOIN instructor_to_courses_days AS itcd ON itcd.instructor_course_id = itc.instructor_course_id ");
-      sql.append("WHERE itc.instructor_id = ? AND itc.is_finished = FALSE ");
+      sql.append("WHERE itc.instructor_id = ? AND itc.is_finished = TRUE ");
       sql.append("GROUP BY c.course_num, ci.course_name, ci.points, ");
       sql.append("d.dept_abbreviation, itc.start_time, itc.end_time, itc.instructor_course_id");
 
