@@ -212,8 +212,8 @@ public class StudentController {
 
       Integer studentId = getStudentId();
 
-      // Check if the course is already dropped or completed
-      if (studentsService.checkDroppedOrCompleted(studentId, instructorCourseId))
+      // Check if the course is already completed
+      if (studentsService.checkCompleted(studentId, instructorCourseId))
          return ResponseEntity.badRequest().body("ERROR: Course already DROPPED or COMPLETED");
 
       // Attempt to drop the student

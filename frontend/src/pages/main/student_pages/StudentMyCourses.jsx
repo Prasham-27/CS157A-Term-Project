@@ -61,17 +61,6 @@ export default function StudentMyCourses() {
         ) : (
             enrolledCourses.map((course) => <CourseComponent key={course.enrollment_date} course={course} />)
         )}
-
-        <Text className={styles.statusText} color="#0055A2">
-          Dropped
-        </Text>
-        {droppedCourses.length === 0 ? (
-          <Text className={styles.messageText}>
-            None dropped
-          </Text>
-        ) : (
-            droppedCourses.map((course) => <CourseComponent key={course.enrollment_date} course={course} />)
-        )}
       </Flex>
     );
 }

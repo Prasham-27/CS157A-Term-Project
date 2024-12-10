@@ -40,6 +40,36 @@ public class InstructorCourse {
    @JsonProperty("course_days")
    private List<Days> courseDays;
 
+   @JsonProperty("max_enrollment")
+   private Integer maxEnrollment;
+
+   @JsonProperty("num_enrolled")
+   private Integer numEnrolled;
+
+   public InstructorCourse(
+           Integer instructorCourseId,
+           String courseName,
+           Integer courseNumber,
+           String deptAbbreviation,
+           Double points,
+           Time startTime,
+           Time endTime,
+           List<Days> courseDays,
+           Integer maxEnrollment,
+           Integer numEnrolled
+   ) {
+      this.instructorCourseId = instructorCourseId;
+      this.courseName = courseName;
+      this.courseNumber = courseNumber;
+      this.deptAbbreviation = deptAbbreviation;
+      this.points = points;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.courseDays = courseDays;
+      this.maxEnrollment = maxEnrollment;
+      this.numEnrolled = numEnrolled;
+   }
+
    public InstructorCourse(
            Integer instructorCourseId,
            String courseName,

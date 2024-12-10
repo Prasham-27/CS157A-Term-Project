@@ -63,8 +63,8 @@ public class StudentsService {
     * @return True if a student has already dropped in or completed a course
     *         with the same course_id as the instructor_course_id.
     */
-   public boolean checkDroppedOrCompleted(Integer studentId, Integer instructorCourseId) {
-      return studentsDao.checkCourseCompleteOrDropped(instructorCourseId, studentId).booleanValue();
+   public boolean checkCompleted(Integer studentId, Integer instructorCourseId) {
+      return studentsDao.checkCourseComplete(instructorCourseId, studentId).booleanValue();
    }
 
    /**

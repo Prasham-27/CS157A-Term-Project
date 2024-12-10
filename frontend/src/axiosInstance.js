@@ -35,12 +35,9 @@ axiosInstance.interceptors.response.use(
         const originalRequest = error.config;
         if (error.response && error.response.status === 401 && !originalRequest._retry) {
 
-            // Check if the error is due to expired JWT
-            originalRequest._retry = true;
-
             // Destroy the JWT token and destroy session all together
-            sessionStorage.removeItem('jwtToken');
             sessionStorage.clear();
+            sessionStorage.removeItem('jwtToken');
 
             alert("Your session has expired. Please log in again.");
             

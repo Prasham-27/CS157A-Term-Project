@@ -15,6 +15,7 @@ import StudentCourseInfo from './pages/main/student_pages/StudentCourseInfo';
 
 import Instructor from './pages/main/Instructor';
 import InstructorMyCourses from './pages/main/instructor_pages/InstructorMyCourses';
+import InstructorMyCourseStudents from './pages/main/instructor_pages/InstructorMyCourseStudents';
 import InstructorProfile from './pages/main/instructor_pages/InstructorProfile';
 
 function App() {
@@ -29,20 +30,17 @@ function App() {
           <Route path="/student" element={<Student />}>
             <Route index element={<Navigate to="mycourses" replace />} /> 
             <Route path="mycourses" element={<StudentMyCourses />} />
-            <Route path="depts" element={<StudentDepartments />}>
-              <Route path="depts/:dept_id/courses" element={<StudentCourses />}>
-                <Route path="depts/:dept_id/courses/:course_id" element={<StudentCourseInfo />} />
-              </Route>
-            </Route>
+            <Route path="depts" element={<StudentDepartments />}/>
+            <Route path="depts/:dept_id/courses" element={<StudentCourses />}/>
+            <Route path="depts/:dept_id/courses/:course_id" element={<StudentCourseInfo />} />
             <Route path="grades" element={<StudentGrades />} />
             <Route path="profile" element={<StudentProfile />} />
           </Route>
 
           {/* Instructor routes */}
           <Route path="/instructor" element={<Instructor />}>
-            <Route path="mycourses" element={<InstructorMyCourses />}>
-              <Route path="mycourses/:instructor_course_id/students" element={<InstructorMyCourses />}/>
-            </Route>
+            <Route path="mycourses" element={<InstructorMyCourses />}/>
+            <Route path="mycourses/:instructor_course_id/students" element={<InstructorMyCourseStudents />}/>
             <Route path="courses" element={<InstructorMyCourses />} />
             <Route path="profile" element={<InstructorProfile />} />
           </Route>
