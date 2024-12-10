@@ -25,7 +25,7 @@ public class Courses {
    private CourseInfo info;
 
    @OneToMany(mappedBy = "InstructorCoursesInfo")
-   private List<InstructorCoursesInfo> instructorToCourseInfo;
+   private List<InstructorToCourses> instructorToCourseInfo;
 
    @OneToMany(mappedBy = "enrollment")
    private List<EnrollmentsId> enrollmentsIds;

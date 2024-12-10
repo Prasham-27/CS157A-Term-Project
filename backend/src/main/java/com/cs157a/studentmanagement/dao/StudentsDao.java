@@ -2,8 +2,8 @@ package com.cs157a.studentmanagement.dao;
 
 
 import com.cs157a.studentmanagement.dao.helper.DaoHelper;
-import com.cs157a.studentmanagement.dao.result_objects.StudentCourse;
-import com.cs157a.studentmanagement.dao.result_objects.StudentInfo;
+import com.cs157a.studentmanagement.dao.result_objects.student.StudentCourse;
+import com.cs157a.studentmanagement.dao.result_objects.student.StudentInfo;
 import com.cs157a.studentmanagement.utils.enums.AcademicYear;
 import com.cs157a.studentmanagement.utils.enums.Days;
 import com.cs157a.studentmanagement.utils.enums.EnrollmentStatus;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

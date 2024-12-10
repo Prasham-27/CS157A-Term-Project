@@ -1,11 +1,13 @@
-package com.cs157a.studentmanagement.dao.result_objects;
+package com.cs157a.studentmanagement.dao.result_objects.instructor;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Holds basic course data from the courses and course_info tables
+ * Instructor view of a base course that they are not assigned to
  */
-public class Course {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CourseView {
 
    @JsonProperty("course_id")
    private Integer courseId;
@@ -19,11 +21,21 @@ public class Course {
    @JsonProperty("points")
    private Double points;
 
-   public Course(Integer courseId, Integer courseNum, String courseName, Double points) {
+   @JsonProperty("dept_abbreviation")
+   private String deptAbbreviation;
+
+   public CourseView(
+           Integer courseId,
+           Integer courseNum,
+           String courseName,
+           Double points,
+           String deptAbbreviation
+   ) {
       this.courseId = courseId;
       this.courseNum = courseNum;
       this.courseName = courseName;
       this.points = points;
+      this.deptAbbreviation = deptAbbreviation;
    }
 
    public Integer getCourseId() {
@@ -56,5 +68,13 @@ public class Course {
 
    public void setPoints(Double points) {
       this.points = points;
+   }
+
+   public String getDeptAbbreviation() {
+      return deptAbbreviation;
+   }
+
+   public void setDeptAbbreviation(String deptAbbreviation) {
+      this.deptAbbreviation = deptAbbreviation;
    }
 }

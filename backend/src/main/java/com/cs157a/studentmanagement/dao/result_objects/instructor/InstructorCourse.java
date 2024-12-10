@@ -1,30 +1,23 @@
-package com.cs157a.studentmanagement.dao.result_objects;
+package com.cs157a.studentmanagement.dao.result_objects.instructor;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.cs157a.studentmanagement.utils.enums.Days;
 import com.cs157a.studentmanagement.utils.enums.EnrollmentStatus;
 import com.cs157a.studentmanagement.utils.enums.Grades;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * Represents the ENROLLED, DROPPED, and COMPLETED courses for a student.
- * Will only include NON-NULL attributes when sent to client as json.
+ * The course of the instructor for instructor mycourses
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudentCourse {
+public class InstructorCourse {
 
    @JsonProperty("instructor_course_id")
    private Integer instructorCourseId;
-
-   @JsonProperty("instructor_first_name")
-   private String instructorFirstName;
-
-   @JsonProperty("instructor_last_name")
-   private String instructorLastName;
 
    @JsonProperty("course_name")
    private String courseName;
@@ -47,32 +40,17 @@ public class StudentCourse {
    @JsonProperty("course_days")
    private List<Days> courseDays;
 
-   @JsonProperty("enrollment_date")
-   private Timestamp enrollmentDate;
-
-   @JsonProperty("enrollment_status")
-   private EnrollmentStatus enrollmentStatus;
-
-   @JsonProperty("grade")
-   private Grades grade;
-
-   public StudentCourse(
+   public InstructorCourse(
            Integer instructorCourseId,
-           String instructorFirstName,
-           String instructorLastName,
            String courseName,
            Integer courseNumber,
            String deptAbbreviation,
            Double points,
            Time startTime,
            Time endTime,
-           List<Days> courseDays,
-           Timestamp enrollmentDate,
-           EnrollmentStatus enrollmentStatus,
-           Grades grade) {
+           List<Days> courseDays
+   ) {
       this.instructorCourseId = instructorCourseId;
-      this.instructorFirstName = instructorFirstName;
-      this.instructorLastName = instructorLastName;
       this.courseName = courseName;
       this.courseNumber = courseNumber;
       this.deptAbbreviation = deptAbbreviation;
@@ -80,9 +58,6 @@ public class StudentCourse {
       this.startTime = startTime;
       this.endTime = endTime;
       this.courseDays = courseDays;
-      this.enrollmentDate = enrollmentDate;
-      this.enrollmentStatus = enrollmentStatus;
-      this.grade = grade;
    }
 
    public Integer getInstructorCourseId() {
@@ -91,22 +66,6 @@ public class StudentCourse {
 
    public void setInstructorCourseId(Integer instructorCourseId) {
       this.instructorCourseId = instructorCourseId;
-   }
-
-   public String getInstructorFirstName() {
-      return instructorFirstName;
-   }
-
-   public void setInstructorFirstName(String instructorFirstName) {
-      this.instructorFirstName = instructorFirstName;
-   }
-
-   public String getInstructorLastName() {
-      return instructorLastName;
-   }
-
-   public void setInstructorLastName(String instructorLastName) {
-      this.instructorLastName = instructorLastName;
    }
 
    public String getCourseName() {
@@ -163,29 +122,5 @@ public class StudentCourse {
 
    public void setCourseDays(List<Days> courseDays) {
       this.courseDays = courseDays;
-   }
-
-   public Timestamp getEnrollmentDate() {
-      return enrollmentDate;
-   }
-
-   public void setEnrollmentDate(Timestamp enrollmentDate) {
-      this.enrollmentDate = enrollmentDate;
-   }
-
-   public EnrollmentStatus getEnrollmentStatus() {
-      return enrollmentStatus;
-   }
-
-   public void setEnrollmentStatus(EnrollmentStatus enrollmentStatus) {
-      this.enrollmentStatus = enrollmentStatus;
-   }
-
-   public Grades getGrade() {
-      return grade;
-   }
-
-   public void setGrade(Grades grade) {
-      this.grade = grade;
    }
 }

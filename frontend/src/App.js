@@ -29,16 +29,21 @@ function App() {
           <Route path="/student" element={<Student />}>
             <Route index element={<Navigate to="mycourses" replace />} /> 
             <Route path="mycourses" element={<StudentMyCourses />} />
-            <Route path="depts" element={<StudentDepartments />} />
-            <Route path="depts/:dept_id/courses" element={<StudentCourses />} />
-            <Route path="depts/:dept_id/courses/:course_id" element={<StudentCourseInfo />} />
+            <Route path="depts" element={<StudentDepartments />}>
+              <Route path="depts/:dept_id/courses" element={<StudentCourses />}>
+                <Route path="depts/:dept_id/courses/:course_id" element={<StudentCourseInfo />} />
+              </Route>
+            </Route>
             <Route path="grades" element={<StudentGrades />} />
             <Route path="profile" element={<StudentProfile />} />
           </Route>
 
           {/* Instructor routes */}
           <Route path="/instructor" element={<Instructor />}>
-            <Route path="mycourses" element={<InstructorMyCourses />} />
+            <Route path="mycourses" element={<InstructorMyCourses />}>
+              <Route path="mycourses/:instructor_course_id/students" element={<InstructorMyCourses />}/>
+            </Route>
+            <Route path="courses" element={<InstructorMyCourses />} />
             <Route path="profile" element={<InstructorProfile />} />
           </Route>
         </Routes>
