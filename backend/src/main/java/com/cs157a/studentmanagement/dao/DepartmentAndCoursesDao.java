@@ -1,9 +1,9 @@
 package com.cs157a.studentmanagement.dao;
 
 import com.cs157a.studentmanagement.dao.helper.DaoHelper;
-import com.cs157a.studentmanagement.dao.result_objects.Course;
+import com.cs157a.studentmanagement.dao.result_objects.student.Course;
 import com.cs157a.studentmanagement.dao.result_objects.Department;
-import com.cs157a.studentmanagement.dao.result_objects.InstructorCourseInfo;
+import com.cs157a.studentmanagement.dao.result_objects.student.InstructorCourseInfo;
 import com.cs157a.studentmanagement.utils.enums.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

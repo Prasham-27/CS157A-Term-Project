@@ -2,8 +2,8 @@ package com.cs157a.studentmanagement.service;
 
 import com.cs157a.studentmanagement.dao.DepartmentAndCoursesDao;
 import com.cs157a.studentmanagement.dao.StudentsDao;
-import com.cs157a.studentmanagement.dao.result_objects.StudentCourse;
-import com.cs157a.studentmanagement.dao.result_objects.StudentInfo;
+import com.cs157a.studentmanagement.dao.result_objects.student.StudentCourse;
+import com.cs157a.studentmanagement.dao.result_objects.student.StudentInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

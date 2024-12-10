@@ -1,4 +1,4 @@
-package com.cs157a.studentmanagement.dao.result_objects;
+package com.cs157a.studentmanagement.dao.result_objects.student;
 
 import com.cs157a.studentmanagement.utils.enums.AcademicYear;
 import com.fasterxml.jackson.annotation.JsonProperty;

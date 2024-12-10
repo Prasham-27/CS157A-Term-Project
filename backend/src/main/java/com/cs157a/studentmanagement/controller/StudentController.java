@@ -1,13 +1,13 @@
 package com.cs157a.studentmanagement.controller;
 
 
-import com.cs157a.studentmanagement.dao.result_objects.*;
+import com.cs157a.studentmanagement.dao.result_objects.Department;
+import com.cs157a.studentmanagement.dao.result_objects.student.*;
 import com.cs157a.studentmanagement.service.DepartmentAndCoursesService;
 import com.cs157a.studentmanagement.service.StudentsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
